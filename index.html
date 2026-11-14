@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -13,4 +14,638 @@
          <script scr="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></script>
          <script scr="math.js"></script>
     </body>
+</html>
+
+<!-- Amara's code -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our website</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+    --bg: #080d17;
+    --panel: #111a29;
+    --panel2: #172337;
+    --blue: #53b9ff;
+    --cyan: #6ce5ed;
+    --white: #edf5ff;
+    --muted: #8495ad;
+    --green: #51dfa3;
+    --orange: #ffbd69;
+    --border: rgba(150,190,230,.15);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+}
+
+/* NAVIGATION */
+
+nav {
+    height: 75px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5%;
+    border-bottom: 1px solid var(--border);
+    background: #0b1220;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.logo span {
+    color: var(--blue);
+}
+
+.nav-links {
+    display: flex;
+    gap: 30px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.nav-links a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.nav-links a:hover {
+    color: var(--blue);
+}
+
+.status {
+    color: var(--green);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+}
+
+/* MAIN */
+
+.container {
+    max-width: 1450px;
+    padding: 40px 5%;
+    margin: auto;
+}
+
+.header {
+    margin-bottom: 30px;
+}
+
+.eyebrow {
+    color: var(--blue);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+}
+
+h1 {
+    font-size: clamp(30px, 4vw, 45px);
+    margin-bottom: 12px;
+}
+
+.header p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+    max-width: 650px;
+}
+
+/* DASHBOARD GRID */
+
+.dashboard {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 22px;
+}
+
+.panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 22px;
+}
+
+.panel-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-title small {
+    color: var(--muted);
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+}
+
+/* MAP */
+
+.map-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    height: 440px;
+    background:
+      radial-gradient(ellipse at 50% 50%, #26364a 0%, #101b2b 65%, #0b1220 100%);
+    border: 1px solid var(--border);
+}
+
+.map-grid {
+    position: absolute;
+    inset: 0;
+    opacity: .25;
+    background-image:
+      linear-gradient(rgba(105,180,230,.2) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(105,180,230,.2) 1px, transparent 1px);
+    background-size: 50px 50px;
+}
+
+/* LUNAR SURFACE */
+
+.moon {
+    position: absolute;
+    width: 310px;
+    height: 310px;
+    border-radius: 50%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    background:
+      radial-gradient(circle at 30% 35%, #a3aab0 0%, #737d87 35%, #424f5d 72%, #273343 100%);
+    box-shadow:
+      0 0 50px rgba(160,190,220,.17),
+      inset -25px -20px 40px rgba(0,0,0,.5);
+}
+
+.crater {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(30,40,53,.32);
+    box-shadow: inset 4px 5px 10px rgba(0,0,0,.3),
+                2px 3px 5px rgba(220,230,240,.08);
+}
+
+.c1 { width: 65px; height: 65px; top: 30px; left: 55px; }
+.c2 { width: 40px; height: 40px; top: 120px; left: 180px; }
+.c3 { width: 80px; height: 80px; top: 190px; left: 55px; }
+.c4 { width: 35px; height: 35px; top: 50px; left: 210px; }
+.c5 { width: 48px; height: 48px; top: 220px; left: 205px; }
+
+.landing-marker {
+    position: absolute;
+    left: 55%;
+    top: 42%;
+    z-index: 3;
+}
+
+.marker-dot {
+    width: 13px;
+    height: 13px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 0 8px rgba(81,223,163,.15),
+                0 0 20px var(--green);
+}
+
+.marker-label {
+    position: absolute;
+    top: -35px;
+    left: 18px;
+    font-size: 10px;
+    color: var(--green);
+    white-space: nowrap;
+    font-family: 'Space Mono', monospace;
+}
+
+.map-coordinates {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    color: #b4c8df;
+    font: 10px 'Space Mono', monospace;
+}
+
+.map-legend {
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 2;
+}
+
+/* INPUTS */
+
+.input-section {
+    margin-top: 22px;
+}
+
+.input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+label {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 9px;
+}
+
+input, select {
+    width: 100%;
+    padding: 13px;
+    border-radius: 7px;
+    background: #0a1422;
+    border: 1px solid var(--border);
+    color: white;
+    outline: none;
+    font-family: 'Space Mono', monospace;
+}
+
+input:focus, select:focus {
+    border-color: var(--blue);
+}
+
+button {
+    margin-top: 18px;
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 7px;
+    background: linear-gradient(90deg, #248de0, #45c5df);
+    color: #06111e;
+    font-weight: 800;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+button:hover {
+    filter: brightness(1.15);
+}
+
+/* RIGHT PANEL */
+
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.metric {
+    padding: 15px;
+    background: var(--panel2);
+    border-radius: 8px;
+    margin-bottom: 11px;
+}
+
+.metric-label {
+    color: var(--muted);
+    font-size: 10px;
+    margin-bottom: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.metric-value {
+    font-size: 23px;
+    font-weight: 700;
+}
+
+.metric-value span {
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.safety {
+    color: var(--green);
+}
+
+.progress {
+    height: 5px;
+    background: #27364a;
+    border-radius: 10px;
+    margin-top: 12px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 85%;
+    background: var(--green);
+    border-radius: 10px;
+}
+
+.data-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+}
+
+.data-row span:first-child {
+    color: var(--muted);
+}
+
+.data-row span:last-child {
+    font-family: 'Space Mono', monospace;
+}
+
+/* FOOTER */
+
+footer {
+    border-top: 1px solid var(--border);
+    padding: 25px 5%;
+    color: var(--muted);
+    font-size: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width: 850px) {
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .map-container {
+        height: 350px;
+    }
+
+    .moon {
+        width: 260px;
+        height: 260px;
+    }
+
+    .right-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media(max-width: 520px) {
+    .right-column {
+        grid-template-columns: 1fr;
+    }
+
+    .input-grid {
+        grid-template-columns: 1fr;
+    }
+
+    footer {
+        flex-direction: column;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+    <div class="logo">LUNA<span>LANDER</span></div>
+
+    <div class="nav-links">
+        <a href="#">Dashboard</a>
+        <a href="#">Terrain Analysis</a>
+        <a href="#">NASA Data</a>
+        <a href="#">About</a>
+    </div>
+
+    <div class="status">● SYSTEM ONLINE</div>
+</nav>
+
+<main class="container">
+
+    <header class="header">
+        <div class="eyebrow">NASA MISSION PLANNING SYSTEM / 001</div>
+        <h1>Find the perfect landing site.</h1>
+        <p>
+            Explore lunar terrain, analyze geographical coordinates,
+            and identify potential spacecraft landing locations using
+            NASA planetary datasets.
+        </p>
+    </header>
+
+    <section class="dashboard">
+
+        <!-- MAIN MAP AND INPUTS -->
+
+        <div class="panel">
+
+            <div class="panel-title">
+                LUNAR TERRAIN MAP
+                <small>MAP VIEW / DEMO</small>
+            </div>
+
+            <div class="map-container">
+                <div class="map-grid"></div>
+
+                <div class="moon">
+                    <div class="crater c1"></div>
+                    <div class="crater c2"></div>
+                    <div class="crater c3"></div>
+                    <div class="crater c4"></div>
+                    <div class="crater c5"></div>
+                </div>
+
+                <div class="landing-marker">
+                    <div class="marker-dot"></div>
+                    <div class="marker-label">CANDIDATE SITE</div>
+                </div>
+
+                <div class="map-coordinates">
+                    LAT: 12.45° N<br>
+                    LONG: 34.82° E
+                </div>
+
+                <div class="map-legend">
+                    <div>🟢 Candidate landing site</div>
+                    <div>◉ Terrain elevation</div>
+                </div>
+            </div>
+
+            <div class="input-section">
+
+                <div class="panel-title">
+                    ENTER COORDINATES
+                    <small>LOCATION INPUT</small>
+                </div>
+
+                <form>
+
+                    <div class="input-grid">
+
+                        <div>
+                            <label for="latitude">LATITUDE (°)</label>
+                            <input
+                                id="latitude"
+                                type="number"
+                                min="-90"
+                                max="90"
+                                step="any"
+                                placeholder="e.g. 12.45"
+                                required>
+                        </div>
+
+                        <div>
+                            <label for="longitude">LONGITUDE (°)</label>
+                            <input
+                                id="longitude"
+                                type="number"
+                                min="-180"
+                                max="180"
+                                step="any"
+                                placeholder="e.g. 34.82"
+                                required>
+                        </div>
+
+                    </div>
+
+                    <div style="margin-top:15px">
+                        <label for="body">CELESTIAL BODY</label>
+                        <select id="body">
+                            <option>Moon</option>
+                            <option>Mars</option>
+                        </select>
+                    </div>
+
+                    <button type="submit">
+                        ANALYZE LANDING LOCATION →
+                    </button>
+
+                </form>
+            </div>
+        </div>
+
+        <!-- RESULTS -->
+
+        <aside class="right-column">
+
+            <div class="panel">
+
+                <div class="panel-title">
+                    LANDING ANALYSIS
+                    <small>DEMO RESULTS</small>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">Landing suitability</div>
+                    <div class="metric-value safety">85% <span>illustrative</span></div>
+                    <div class="progress">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">Terrain elevation</div>
+                    <div class="metric-value">1,245 <span>meters</span></div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">Surface slope</div>
+                    <div class="metric-value">4.2° <span>degrees</span></div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">Rock hazard estimate</div>
+                    <div class="metric-value">LOW</div>
+                </div>
+
+            </div>
+
+            <div class="panel">
+
+                <div class="panel-title">
+                    NASA DATA SOURCES
+                    <small>DATA MODULE</small>
+                </div>
+
+                <div class="data-row">
+                    <span>Elevation data</span>
+                    <span>LOLA</span>
+                </div>
+
+                <div class="data-row">
+                    <span>Terrain imagery</span>
+                    <span>LROC</span>
+                </div>
+
+                <div class="data-row">
+                    <span>Surface analysis</span>
+                    <span>NASA PDS</span>
+                </div>
+
+                <div class="data-row">
+                    <span>Data connection</span>
+                    <span style="color:var(--orange)">DEMO</span>
+                </div>
+
+            </div>
+
+            <div class="panel">
+                <div class="panel-title">
+                    OPTIMAL LANDING SITE
+                </div>
+
+                <div class="metric-label">RECOMMENDED COORDINATES</div>
+
+                <div class="metric-value" style="font-size:17px">
+                    12.45° N
+                </div>
+
+                <div class="metric-value" style="font-size:17px;margin-top:8px">
+                    34.82° E
+                </div>
+
+                <p style="color:var(--muted);font-size:11px;line-height:1.7;margin-top:14px">
+                    Illustrative candidate location.
+                    A real recommendation requires terrain,
+                    slope, hazard and mission constraint analysis.
+                </p>
+
+            </div>
+
+        </aside>
+
+    </section>
+
+</main>
+
+<footer>
+    <div>© 2026 LUNALANDER | NASA DATA EXPLORATION</div>
+    <div>PLANETARY LANDING SITE RESEARCH INTERFACE</div>
+</footer>
+
+</body>
 </html>
